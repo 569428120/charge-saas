@@ -74,7 +74,7 @@ class MenuLayout extends Component {
     };
 
     render() {
-        return <Sider width={200} style={{backgroundColor: '#fff', minHeight: '90vh'}}
+        return <Sider width={200} style={{backgroundColor: '#fff', minHeight: '90vh', marginTop: -4}}
                       collapsed={this.props.collapsed}
         >
             <Menus menus={this.props.menus}
