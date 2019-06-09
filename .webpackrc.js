@@ -11,6 +11,11 @@ export default {
             target: 'http://jsonplaceholder.typicode.com/',
             changeOrigin: true,
             pathRewrite: {'^/api': ''}
+        },
+        '/charge': {
+            target: 'http://127.0.0.1:9999/',
+            changeOrigin: true,
+            pathRewrite: {'^/charge': ''}
         }
     },
     extraBabelPlugins: [['import', {libraryName: 'antd', style: true}]],

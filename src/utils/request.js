@@ -9,8 +9,8 @@ function checkStatus(response) {
         return response
     }
 
-    const error = new Error(response.statusText)
-    error.response = response
+    const error = new Error(response.statusText);
+    error.response = response;
     throw error
 }
 
@@ -29,14 +29,54 @@ function checkStatus(response) {
 //     .catch(err => ({ err }));
 // }
 
-async function request(url, options) {
-    const response = await fetch(url, options)
-    checkStatus(response)
-    const data = await response.json()
+function filter(str) { // 特殊字符转义
+    if (!str) {
+        str = '';
+    }
+    str += ''; // 隐式转换
+    str = str.replace(/%/g, '%25');
+    str = str.replace(/\+/g, '%2B');
+    str = str.replace(/ /g, '%20');
+    str = str.replace(/\//g, '%2F');
+    str = str.replace(/\?/g, '%3F');
+    str = str.replace(/&/g, '%26');
+    str = str.replace(/\=/g, '%3D');
+    str = str.replace(/#/g, '%23');
+    return str;
+}
+
+function formateObjToParamStr(paramObj) {
+    if (!paramObj) {
+        return "";
+    }
+    const sdata = [];
+    for (let attr in paramObj) {
+
+        sdata.push(`${attr}=${filter(paramObj[attr])}`);
+    }
+    return sdata.join('&');
+};
+
+async function request(url, method, params) {
+
+    let options = null;
+    const urlParams = formateObjToParamStr(params);
+    if ("get" === method.toLowerCase()) {
+        url = url + "?" + urlParams;
+    } else {
+        options = {
+            methods: method,
+            data: JSON.stringify(params)
+        }
+    }
+
+    const response = await fetch(url, options);
+    checkStatus(response);
+    const data = await response.json();
     const ret = {
         data,
         headers: {}
-    }   
+    };
 
     if (response.headers.get('x-total-count')) {
         ret.headers['x-total-count'] = response.headers.get('x-total-count')

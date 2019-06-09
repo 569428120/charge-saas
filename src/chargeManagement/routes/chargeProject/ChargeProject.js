@@ -83,11 +83,13 @@ class ChargeProject extends React.Component {
      *  搜索方法
      */
     onSearch = (values) => {
-        console.log(values);
+        const {page, pageSize} = this.props;
         this.props.dispatch({
-            type: "chargeProject/fetch",
+            type: "chargeProject/queryProject",
             payload: {
-                page: 1
+                values,
+                page,
+                pageSize
             }
         });
     };
@@ -134,7 +136,7 @@ class ChargeProject extends React.Component {
                 className={app_styles.table}
                 dataSource={this.props.chargeProjectData}
                 columns={params.projectColumns(this.onRowUpdate, this.onRowDelete)}
-                loading={this.props.loading.effects['chargeProject/fetch']}
+                loading={this.props.loading.effects['chargeProject/queryProject']}
                 bordered
                 pagination={false}
                 style={{height: '68vh'}}

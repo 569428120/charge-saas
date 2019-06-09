@@ -1,13 +1,17 @@
 // user api
-import * as usersService from '../services/users'
+import * as projectService from "../services/chargeProjectService"
 
 export default {
     namespace: 'chargeProject',
     state: {
         // 数据
         chargeProjectData: [],
+        // 总数
         total: 0,
-        page: 0
+        //当前页
+        page: 1,
+        //每页数量
+        pageSize: 20
     },
     reducers: {
         /**
@@ -15,39 +19,20 @@ export default {
          * @param {*} state
          * @param {*} param1
          */
-        save(state, {payload: params}) {
+        setState(state, {payload: params}) {
             return {...state, ...params}
         }
     },
     effects: {
 
-        // 打开弹窗
-        * openModal({}, {call, put}) {
+        * queryProject({payload: params}, {call, put}) {
+            const {values, page, pageSize} = params;
+            const {data} = yield call(projectService.queryProject, values, page, pageSize);
             yield put({
-                type: 'save',
+                type: 'setState',
                 payload: {
-                    visible: true
-                }
-            })
-        },
-        // 关闭弹窗
-        * closeModal({}, {call, put}) {
-            yield put({
-                type: 'save',
-                payload: {
-                    visible: false
-                }
-            })
-        },
-
-        * fetch({payload: {page}}, {call, put}) {
-            const {data, headers} = yield call(usersService.fetch, {page});
-            yield put({
-                type: 'save',
-                payload: {
-                    chargeProjectData: data,
-                    total: headers['x-total-count'],
-                    page: parseInt(page, 10)
+                    chargeProjectData: data.data,
+                    total: data.total
                 }
             })
         }

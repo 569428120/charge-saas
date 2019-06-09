@@ -56,10 +56,10 @@ class SearchList extends Component {
                     <DatePicker disabledDate={this.disabledStartDate} placeholder="请选择开始时间" style={{width: 150}}/>
                 )}
             </Form.Item>
-            <Form.Item >
+            <Form.Item>
                 -
             </Form.Item>
-            <Form.Item >
+            <Form.Item>
                 {getFieldDecorator('endTime', {
                     initialValue: null,
                 })(
