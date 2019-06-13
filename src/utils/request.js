@@ -58,18 +58,21 @@ function formateObjToParamStr(paramObj) {
 };
 
 async function request(url, method, params) {
-
     let options = null;
-    const urlParams = formateObjToParamStr(params);
     if ("get" === method.toLowerCase()) {
+        const urlParams = formateObjToParamStr(params);
         url = url + "?" + urlParams;
     } else {
         options = {
-            methods: method,
-            data: JSON.stringify(params)
+            method: method,
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params)
         }
     }
-
+    console.log(options);
     const response = await fetch(url, options);
     checkStatus(response);
     const data = await response.json();

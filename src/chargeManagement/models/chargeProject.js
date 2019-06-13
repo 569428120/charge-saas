@@ -24,9 +24,8 @@ export default {
         }
     },
     effects: {
-
-        * queryProject({payload: params}, {call, put}) {
-            const {values, page, pageSize} = params;
+        //查询收费项目
+        * queryProject({payload: {values, page, pageSize}}, {call, put}) {
             const {data} = yield call(projectService.queryProject, values, page, pageSize);
             yield put({
                 type: 'setState',
@@ -35,7 +34,21 @@ export default {
                     total: data.total
                 }
             })
-        }
+        },
+        //创建收费项目
+        * createProject({payload: values}, {select, call, put}) {
+            yield call(projectService.createProject, values);
+            //刷新数据
+            const {page, pageSize} = yield select(state => state.chargeProject);
+            yield put({
+                type: "queryProject",
+                payload: {
+                    page,
+                    pageSize
+                }
+            });
+
+        },
     },
     subscriptions: {
         setup({dispatch, history}) {

@@ -17,7 +17,8 @@
     "qs": "latest",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-router-dom": "latest"
+    "react-router-dom": "latest",
+    "moment": "latest"
   },
   "devDependencies": {
     "babel-plugin-dva-hmr": "^0.3.2",

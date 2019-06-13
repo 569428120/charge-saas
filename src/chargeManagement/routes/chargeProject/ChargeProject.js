@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'dva'
-import {Table, message, Tabs, Affix, Pagination} from 'antd'
+import {Table, message, Pagination} from 'antd'
 import SearchList from '../../components/chargeProject/SearchList'
 import OperationButtonList from "../../components/chargeProject/OperationButtonList";
 import FromModal from "../../components/chargeProject/FromModal";
@@ -8,10 +8,6 @@ import app_styles from "../../../app.less"
 
 
 import * as params from './chargeProjectParams'
-import {Redirect, Route, Switch} from "react-router";
-
-
-const {TabPane} = Tabs;
 
 
 /***
@@ -44,7 +40,13 @@ class ChargeProject extends React.Component {
     /**
      *   新增弹窗ok按钮回调
      */
-    onModalOk = () => {
+    onModalOk = (values) => {
+        this.props.dispatch({
+            type: "chargeProject/createProject",
+            payload: {
+                ...values
+            }
+        });
         this.setState({
             visible: false
         })
@@ -96,30 +98,8 @@ class ChargeProject extends React.Component {
 
 
     render() {
-        const dataSource = [
-            {
-                id: '1',
-                name: '2019年收费',
-                sumMoney: 500000,
-                number: 50,
-                startTime: '2019-4-5',
-                endTime: '2019-5-1',
-                desc: '西湖区湖底公园1号',
-            },
-            {
-                id: '1',
-                name: '2018年收费',
-                sumMoney: 500000,
-                number: 50,
-                startTime: '2019-4-5',
-                endTime: '2019-5-1',
-                desc: '西湖区湖底公园1号'
-            },
-        ];
-
 
         const rowSelection = {
-
             onSelect: (record, selected, selectedRows) => {
                 console.log(record, selected, selectedRows);
             },

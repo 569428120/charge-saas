@@ -1,78 +1,93 @@
 import React, {Component} from "react";
-import {Button, Form, Input, Modal, Select, Icon, DatePicker,} from "antd";
+import {Button, Form, Input, Modal, Icon, DatePicker,} from "antd";
 
+const {TextArea} = Input;
 
-const Option = Select.Option;
+const formItemLayout = {
+    labelCol: {
+        xs: {span: 24},
+        sm: {span: 8},
+    },
+    wrapperCol: {
+        xs: {span: 24},
+        sm: {span: 16},
+    },
+};
 
 /**
  *  新增更新弹窗
  */
 class FromModal extends Component {
 
+    /**
+     *  提交表单
+     */
+    onModalOk = () => {
+        const {onOk} = this.props;
+        this.props.form.validateFields((err, values) => {
+            if (!err) {
+                onOk(values);
+            }
+        });
+    };
+
     render() {
-        const config = {
-            rules: [{type: 'object', required: true, message: 'Please select time!'}],
-        };
         const {getFieldDecorator} = this.props.form;
-
-        const formItemLayout = {
-            labelCol: {
-                xs: {span: 24},
-                sm: {span: 8},
-            },
-            wrapperCol: {
-                xs: {span: 24},
-                sm: {span: 16},
-            },
-        };
-
-
-        const children = [];
-        for (let i = 10; i < 36; i++) {
-            children.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>);
-        }
-
 
         return <Modal
             title="增加"
             visible={this.props.visible}
-            onOk={this.props.onOk}
+            onOk={this.onModalOk}
             onCancel={this.props.onCancel}
         >
             <Form {...formItemLayout} onSubmit={() => {
             }}>
                 <Form.Item label="项目名称">
-                    {getFieldDecorator('name', config)(<Input style={{width: '70%'}}/>)}
+                    {getFieldDecorator('name', {
+                        rules: [
+                            {
+                                required: true,
+                                message: '请输入项目名称'
+                            }
+                        ]
+                    })(
+                        <Input style={{width: '70%'}}/>)}
                 </Form.Item>
 
                 <Form.Item label="开始时间">
-                    {getFieldDecorator('startTime', config)(<DatePicker style={{width: '70%'}}/>)}
+                    {getFieldDecorator('startTime', {
+                        rules: [
+                            {
+                                required: true,
+                                message: '请选择开始时间'
+                            }
+                        ]
+                    })(<DatePicker style={{width: '70%'}}/>)}
                 </Form.Item>
                 <Form.Item label="结束时间">
-                    {getFieldDecorator('endTime', config)(<DatePicker style={{width: '70%'}}/>)}
-                </Form.Item>
-
-                <Form.Item label="选择班级">
-                    {getFieldDecorator('banji', config)(<Select mode="multiple"
-                                                                style={{width: '70%'}}
-                                                                placeholder="Please select"
-                                                                defaultValue={['a10', 'c12']}
-                                                                onChange={(value) => {
-                                                                    console.log(value)
-                                                                }}
-                    >
-                        {children}
-                    </Select>)}
+                    {getFieldDecorator('endTime', {
+                        rules: [
+                            {
+                                required: true,
+                                message: '请选择结束时间'
+                            }
+                        ]
+                    })(<DatePicker style={{width: '70%'}}/>)}
                 </Form.Item>
 
                 <Form.Item label="导入模板">
-                    {getFieldDecorator('mob', config)(
+                    {getFieldDecorator('mob', [])(
                         <Button style={{width: '70%'}}>
                             <Icon type="upload"/> Click to Upload
                         </Button>)
                     }
                 </Form.Item>
 
+                <Form.Item label="描述">
+                    {getFieldDecorator('description', {
+                        rules: []
+                    })(<TextArea rows={4} style={{width: '70%'}}/>)}
+                </Form.Item>
 
             </Form>
         </Modal>
