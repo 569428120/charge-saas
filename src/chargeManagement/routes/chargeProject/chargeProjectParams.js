@@ -1,6 +1,6 @@
-import {Link} from "react-router-dom";
 import {Popconfirm} from "antd";
 import React from "react";
+
 
 
 /**
@@ -13,40 +13,44 @@ export function projectColumns(onRowUpdate, onRowDelete) {
             title: '名称',
             dataIndex: 'name',
             key: 'name',
-            render: text => <Link to={"/charge-details?projectId" + text}>{text}</Link>
+            width: 150,
         },
         {
             title: '总金额(元)',
             dataIndex: 'sumMoney',
             key: 'sumMoney',
+            width: 100,
         },
         {
             title: '人数',
             dataIndex: 'number',
             key: 'number',
+            width: 100,
         },
         {
             title: '开始时间',
             dataIndex: 'startTime',
             key: 'startTime',
+            width: 150,
         },
         {
             title: '结束时间',
             dataIndex: 'endTime',
             key: 'endTime',
+            width: 150,
         },
         {
             title: '描述',
-            dataIndex: 'desc',
-            key: 'desc',
-            width: '30%',
+            dataIndex: 'description',
+            key: 'description',
+            width: 250,
         },
         {
             title: '操作',
             dataIndex: 'id',
             key: 'id',
             render: text => <span>
-                <a href="#" onClick={onRowUpdate}>修改</a>|
+                <a href="#" onClick={onRowUpdate}>收费详情</a>|
                 <Popconfirm
                     title="Are you sure delete this task?"
                     onConfirm={() => {
@@ -57,7 +61,7 @@ export function projectColumns(onRowUpdate, onRowDelete) {
                     okText="Yes"
                     cancelText="No"
                 >
-                  <a href="#">删除</a>
+                  <a href="#">人员详情</a>
                 </Popconfirm>
             </span>
         },

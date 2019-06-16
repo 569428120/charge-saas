@@ -19,6 +19,19 @@ class DetailsSearch extends React.Component {
     };
 
     /**
+     * 下来选择事件
+     * @param value
+     */
+    onSelectChange = (value) => {
+        const {onSelectChange} = this.props;
+        if (onSelectChange) {
+            onSelectChange(value);
+        }
+        this.props.form.resetFields(["name"]);
+    };
+
+
+    /**
      * 重置
      */
     onReset = () => {
@@ -27,20 +40,28 @@ class DetailsSearch extends React.Component {
 
     render() {
         const {getFieldDecorator} = this.props.form;
+        const {projectData} = this.props;
+        //历史数据
+        const {projectId, name} = this.props.dataSource;
 
         return <Form className="ant-advanced-search-form" layout="inline">
             <Form.Item label="收费项目">
-                {getFieldDecorator('startTime', {
-                    initialValue: 'jack',
+                {getFieldDecorator('projectId', {
+                    initialValue: projectId,
                 })(
-                    <Select style={{width: 200}}>
-                        <Option value="jack">2019年收费项目</Option>
-                        <Option value="lucy">2018年收费项目</Option>
+                    <Select onChange={this.onSelectChange} style={{width: 200}}>
+                        {
+                            projectData.map(item => {
+                                return <Option key={item.id} value={item.id}>{item.name}</Option>
+                            })
+                        }
                     </Select>
                 )}
             </Form.Item>
             <Form.Item label="名称">
-                {getFieldDecorator('name', {})(
+                {getFieldDecorator('name', {
+                    initialValue: name,
+                })(
                     <Input style={{width: 200}}/>
                 )}
             </Form.Item>

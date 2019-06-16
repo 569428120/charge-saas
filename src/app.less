@@ -7,6 +7,37 @@
       text-overflow: ellipsis;
       font-size: 1.2rem;
     }
+
+    .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body {
+
+      position: relative;
+      background: #fff;
+      min-height: 350px;
+
+    }
+  }
+}
+
+.table_no_height {
+  :global {
+    .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+      padding: 5px 16px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 1.2rem;
+    }
+
+    .ant-table-fixed-header > .ant-table-content > .ant-table-scroll > .ant-table-body {
+      position: relative;
+      background: #fff;
+    }
+
+    .ant-table-bordered.ant-table-empty .ant-table-placeholder {
+      border-right: 1px solid #e8e8e8;
+      border-left: 1px solid #e8e8e8;
+      min-height: 370px;
+    }
   }
 }
 
@@ -24,6 +55,8 @@
 }
 
 .context {
+  height: 26px;
+
   :global {
     .ant-form label {
       font-size: 1.2rem;
@@ -56,6 +89,17 @@
       height: 26px;
       cursor: pointer;
       font-size: 1.2rem;
+      margin-top: 8px;
+    }
+
+    .ant-select-selection-selected-value {
+      float: left;
+      max-width: 100%;
+      padding-right: 20px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      margin-top: -4px;
     }
   }
 }

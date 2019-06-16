@@ -65,7 +65,7 @@ class Headers extends Component {
             </Col>
             <Col span={2} style={{textAlign: "right"}}>
                 <Popover placement="bottomRight" title={text} content={content} trigger="click">
-                    <Avatar size={50} icon="user" style={{marginRight: -62}}/>
+                    <Avatar size={50} icon="user" />
                 </Popover>
 
             </Col>

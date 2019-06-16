@@ -10,6 +10,9 @@ import request from '../../utils/request'
  * @returns {Promise<*>}
  */
 export function queryProject(values, page, pageSize) {
+    if (!values) {
+        values = {};
+    }
     const name = values.name;
     let startTime = "";
     let endTime = "";
@@ -50,4 +53,34 @@ export function createProject(values) {
         description
     };
     return request('/charge/charge-project/posts', "POST", {...params})
+}
+
+/**
+ *   更新收费项目
+ * @param values 表单数据
+ */
+export function updateProject(values) {
+    let startTime = "";
+    let endTime = "";
+    if (values.startTime) {
+        startTime = moment(values.startTime).format('YYYY-MM-DD');
+    }
+    if (values.endTime) {
+        endTime = moment(values.endTime).format('YYYY-MM-DD')
+    }
+
+    const params = {
+        ...values,
+        startTime,
+        endTime,
+    };
+    return request('/charge/charge-project/updates/update-by-id', "PUT", {...params})
+}
+
+/**
+ *  删除收费项目
+ * @param projectIds 项目id'
+ */
+export function deleteProjects(projectIds) {
+    return request('/charge/charge-project/deletes/del-by-id', "DELETE", {projectIds})
 }

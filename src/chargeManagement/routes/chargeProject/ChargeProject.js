@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'dva'
-import {Table, message, Pagination} from 'antd'
+import {Table, message, Modal, Pagination} from 'antd'
 import SearchList from '../../components/chargeProject/SearchList'
 import OperationButtonList from "../../components/chargeProject/OperationButtonList";
 import FromModal from "../../components/chargeProject/FromModal";
@@ -15,19 +15,54 @@ import * as params from './chargeProjectParams'
  */
 class ChargeProject extends React.Component {
 
-    state = {
-        //是否弹窗
-        visible: false,
-        // 报表是否显示
-        chargeReportVisible: false
-    };
     /**
      *   点击增加按钮实践回调
      */
     onOperationAdd = () => {
-        this.setState({
-            visible: true
-        })
+        this.openModal({});
+    };
+
+    /**
+     * 删除按钮
+     */
+    onOperationDelete = () => {
+        const {projectSelectedRows, page, pageSize} = this.props;
+        if (projectSelectedRows.length <= 0) {
+            message.info("请选择删除项");
+            return;
+        }
+
+        Modal.confirm({
+            title: '删除确认',
+            content: '是否删除所选数据？',
+            onOk: () => {
+                this.props.dispatch({
+                    type: "chargeProject/deleteProjects",
+                    payload: {
+                        page,
+                        pageSize,
+                        projectIds: projectSelectedRows.map(item => item.id),
+                    }
+                });
+            }
+        });
+
+    };
+
+    /**
+     *  更新数据
+     */
+    onOperationUpdate = () => {
+        const {projectSelectedRows} = this.props;
+        if (projectSelectedRows.length <= 0) {
+            message.info("请选择需要更新的项目");
+            return;
+        }
+        if (projectSelectedRows.length > 1) {
+            message.info("只允许对单条数据进行修改");
+            return;
+        }
+        this.openModal(projectSelectedRows[0]);
     };
 
     /**
@@ -40,58 +75,86 @@ class ChargeProject extends React.Component {
     /**
      *   新增弹窗ok按钮回调
      */
-    onModalOk = (values) => {
-        this.props.dispatch({
-            type: "chargeProject/createProject",
-            payload: {
-                ...values
-            }
-        });
-        this.setState({
-            visible: false
-        })
+    onModalOk = (values, isEdit) => {
+        if (isEdit) {
+            this.props.dispatch({
+                type: "chargeProject/updateProject",
+                payload: {
+                    ...values
+                }
+            });
+        } else {
+            this.props.dispatch({
+                type: "chargeProject/createProject",
+                payload: {
+                    ...values
+                }
+            });
+        }
+        this.closeModal();
     };
 
     /**
      *  新增弹窗取消按钮回调
      */
     onModalCancel = () => {
-        this.setState({
-            visible: false
-        })
+        this.closeModal();
     };
 
-
-    /**
-     * 点击更新
-     * @param value 需要更新的对象
-     * @param id 需要更新的id
-     */
-    onRowUpdate = (value, id) => {
-        this.setState({
-            visible: true
-        })
-    };
-
-    /**
-     * 点击删除
-     * @param id 需要删除的id
-     */
-    onRowDelete = (id) => {
-        message.success('删除成功');
-    };
 
     /**
      *  搜索方法
      */
     onSearch = (values) => {
-        const {page, pageSize} = this.props;
+        const {pageSize} = this.props;
         this.props.dispatch({
             type: "chargeProject/queryProject",
             payload: {
                 values,
-                page,
+                page: 1,
                 pageSize
+            }
+        });
+    };
+
+    /**
+     * 翻页
+     */
+    onPageChange = (page) => {
+        const {pageSize} = this.props;
+        this.props.dispatch({
+            type: "chargeProject/queryProject",
+            payload: {
+                values: {},
+                page: page,
+                pageSize
+            }
+        });
+    };
+
+    /**
+     *  打开弹窗
+     */
+    openModal = (currProject) => {
+        this.props.dispatch({
+            type: "chargeProject/setState",
+            payload: {
+                currProject,
+                visible: true
+            }
+        });
+    };
+
+    /**
+     *  关闭弹窗
+     */
+    closeModal = () => {
+        this.props.dispatch({
+            type: "chargeProject/setState",
+            payload: {
+                projectSelectedRows: [],
+                currProject: {},
+                visible: false
             }
         });
     };
@@ -100,31 +163,57 @@ class ChargeProject extends React.Component {
     render() {
 
         const rowSelection = {
+            selectedRowKeys: this.props.projectSelectedRows.map(item => item.id),
             onSelect: (record, selected, selectedRows) => {
-                console.log(record, selected, selectedRows);
+                this.props.dispatch({
+                    type: "chargeProject/setState",
+                    payload: {
+                        projectSelectedRows: selectedRows,
+                    }
+                });
             },
             onSelectAll: (selected, selectedRows, changeRows) => {
-                console.log(selected, selectedRows, changeRows);
+                this.props.dispatch({
+                    type: "chargeProject/setState",
+                    payload: {
+                        projectSelectedRows: selectedRows,
+                    }
+                });
             },
         };
 
         return <div>
             <SearchList onSearch={this.onSearch}/>
-            <FromModal visible={this.state.visible} onOk={this.onModalOk} onCancel={this.onModalCancel}/>
-            <OperationButtonList onAdd={this.onOperationAdd} onDownload={this.onOperationDownload}/>
+            <FromModal visible={this.props.visible}
+                       dataSource={this.props.currProject}
+                       onOk={this.onModalOk}
+                       onCancel={this.onModalCancel}/>
+            <OperationButtonList
+                onAdd={this.onOperationAdd}
+                onDelete={this.onOperationDelete}
+                onUpdate={this.onOperationUpdate}
+                onDownload={this.onOperationDownload}/>
             <Table
-                className={app_styles.table}
+                className={this.props.total > 0 ? app_styles.table : app_styles.table_no_height}
                 dataSource={this.props.chargeProjectData}
                 columns={params.projectColumns(this.onRowUpdate, this.onRowDelete)}
                 loading={this.props.loading.effects['chargeProject/queryProject']}
                 bordered
+                rowKey="id"
+                scroll={{y: 370}}
                 pagination={false}
-                style={{height: '68vh'}}
-                scroll={{y: '68vh'}}
                 rowSelection={rowSelection}
             />
             <div className={app_styles.bottom_context}>
-                <Pagination defaultCurrent={1} total={this.props.total}/>
+                <Pagination defaultCurrent={1}
+                            showSizeChanger={true}
+                            pageSizeOptions={["20", "50", "100"]}
+                            showTotal={(total, range) => `总数 ${total} 当前${range[0]}-${range[1]} 共 ${total} 条`}
+                            total={this.props.total}
+                            pageSize={this.props.pageSize}
+                            onShowSizeChange={() => {
+                            }}
+                            onChange={this.onPageChange}/>
             </div>
         </div>
     }

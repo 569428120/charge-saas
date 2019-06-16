@@ -57,34 +57,67 @@ function formateObjToParamStr(paramObj) {
     return sdata.join('&');
 };
 
+const headers = {
+    'Content-Type': 'application/json'
+};
+
+const credentials = "include";
+
+
 async function request(url, method, params) {
-    let options = null;
+
+    let response = {};
+
+    // get请求
     if ("get" === method.toLowerCase()) {
         const urlParams = formateObjToParamStr(params);
         url = url + "?" + urlParams;
-    } else {
-        options = {
-            method: method,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(params)
-        }
+        response = await fetch(url, {
+            credentials: credentials,
+            headers: headers,
+        });
     }
-    console.log(options);
-    const response = await fetch(url, options);
+    // post请求
+    if ("post" === method.toLowerCase()) {
+        response = await fetch(url, {
+            method: method,
+            credentials: credentials,
+            headers: headers,
+            body: JSON.stringify(params)
+        });
+    }
+
+    //delete请求
+    if ("delete" === method.toLowerCase()) {
+        url = url + "?" + formateObjToParamStr(params);
+        response = await fetch(url, {
+            method: method,
+            credentials: credentials,
+            headers: headers,
+        });
+    }
+
+    //更新请求
+    if ("put" === method.toLowerCase()) {
+        response = await fetch(url, {
+            method: method,
+            credentials: credentials,
+            headers: headers,
+            body: JSON.stringify(params)
+        });
+    }
+
+
     checkStatus(response);
-    const data = await response.json();
-    const ret = {
+    let data = await response.text();
+    // json数据
+    if (data.startsWith("{") || data.startsWith("[")) {
+        data = JSON.parse(data);
+    }
+    return {
         data,
         headers: {}
     };
-
-    if (response.headers.get('x-total-count')) {
-        ret.headers['x-total-count'] = response.headers.get('x-total-count')
-    }
-    return ret
 }
 
 export default request

@@ -7,33 +7,13 @@ import {Button} from 'antd'
  */
 class OperationButtonList extends Component {
 
-    /**
-     *  新增
-     */
-    onAdd = () => {
-        const {onAdd} = this.props;
-        if (onAdd) {
-            onAdd();
-        }
-    };
-
-    /**
-     *   下载
-     */
-    onDownload = () => {
-
-    };
 
     render() {
         return <div>
-            <Button onClick={() => {
-                this.onAdd();
-            }}>新增</Button>
-            <Button onClick={() => {
-            }}>查看报表</Button>
-            <Button onClick={() => {
-                this.onDownload();
-            }}>模板下载</Button>
+            <Button onClick={this.props.onAdd}>新增</Button>
+            <Button onClick={this.props.onUpdate}>编辑</Button>
+            <Button onClick={this.props.onDelete}>删除</Button>
+            <Button onClick={this.props.onDownload}>模板下载</Button>
         </div>
     }
 }
