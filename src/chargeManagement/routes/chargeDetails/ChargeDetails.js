@@ -347,6 +347,9 @@ class ChargeDetails extends React.Component {
                     bordered
                     pagination={false}
             />
+            <div>
+                <label>总计：</label>
+            </div>
         </div>;
     }
 }

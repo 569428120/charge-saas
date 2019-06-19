@@ -26,6 +26,7 @@ const app = dva({
 
 app.model(require('./models/appMdels').default)
 
+
 // 4. Router
 app.router(require('./router').default);
 

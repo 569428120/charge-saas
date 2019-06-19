@@ -4,9 +4,10 @@ import Headers from "./Headers";
 import MenuLayout from "./MenuLayout";
 import {connect} from "dva";
 import Login from "../Login";
-import {Link} from "react-router-dom";
+
 import styles from '../../../app.less'
 import {routerRedux} from "dva/router";
+import {routerActions as router} from "react-router-redux";
 
 const {Content} = Layout;
 
@@ -73,7 +74,7 @@ class MainLayout extends Component {
         const {routeMap} = this.props;
         const routeInfo = routeMap.get(path);
         // 跳转路由
-        this.props.dispatch(routerRedux.push(path));
+        this.props.dispatch(router.push(path));
         // 选中对应的头菜单,对应的菜单
         this.setState({
             tabActiveKey: path,

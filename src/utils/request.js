@@ -1,4 +1,5 @@
 import fetch from 'dva/fetch'
+import queryString from 'query-string';
 
 // function parseJSON(response) {
 //     return response.json()

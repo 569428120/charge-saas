@@ -64,7 +64,7 @@ function RouterConfig({history, app}) {
 
     return (
         <ConnectedRouter history={history}>
-            <App>
+                <App>
                     <Route path="/" exact component={IndexPage}/>
                     <Route path="/users" exact component={Users}/>
                     <Route path="/charge-project" exact component={ChargeProject}/>
@@ -73,9 +73,14 @@ function RouterConfig({history, app}) {
                     <Route path="/financial-statement" exact component={FinancialStatement}/>
                     <Route path="/home" exact component={HomePage}/>
 
-            </App>
+                    <Route
+                        path="*"
+                        render={() => <Redirect to="/home"/>}
+                    />
+
+                </App>
         </ConnectedRouter>
-    )
+)
 }
 
 export default RouterConfig

@@ -5,8 +5,8 @@ const tagMap = new Map();
 tagMap.set("boarding_go", <Tag color="cyan">走读</Tag>);
 tagMap.set("boarding_half", <Tag color="blue">半托</Tag>);
 tagMap.set("boarding_all", <Tag color="geekblue">全托</Tag>);
-tagMap.set("traffic_0", <Tag color="gold">无需乘车</Tag>);
-tagMap.set("traffic_1", <Tag color="lime">需乘车</Tag>);
+tagMap.set("traffic_0", <span/>);
+tagMap.set("traffic_1", <Tag color="lime">交通费用</Tag>);
 
 
 /**

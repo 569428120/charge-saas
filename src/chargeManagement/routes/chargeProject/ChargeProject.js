@@ -207,6 +207,7 @@ class ChargeProject extends React.Component {
             <div className={app_styles.bottom_context}>
                 <Pagination defaultCurrent={1}
                             showSizeChanger={true}
+                            size="small"
                             pageSizeOptions={["20", "50", "100"]}
                             showTotal={(total, range) => `总数 ${total} 当前${range[0]}-${range[1]} 共 ${total} 条`}
                             total={this.props.total}

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'dva'
-import {withRouter} from 'dva/router'
+import {Redirect, withRouter} from 'dva/router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import MainLayout from './components/common/MainLayout/MainLayout'
@@ -9,6 +9,7 @@ import {LocaleProvider} from 'antd';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
+import {routerActions as router} from "react-router-redux";
 
 
 moment.locale('zh-cn');
@@ -17,6 +18,7 @@ moment.locale('zh-cn');
 let lastHref;
 
 class App extends Component {
+
     render() {
         let {loading, children, location} = this.props;
         const {href} = window.location;
