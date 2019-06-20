@@ -190,7 +190,6 @@ class MainLayout extends Component {
                         </Button>
                         <Tabs style={{marginTop: -37, marginLeft: 44}}
                               defaultActiveKey="1"
-                              size="small"
                               type="editable-card"
                               hideAdd={true}
                               activeKey={this.state.tabActiveKey}

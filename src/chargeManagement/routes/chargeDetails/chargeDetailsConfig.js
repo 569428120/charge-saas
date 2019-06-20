@@ -2,26 +2,27 @@ import {Tag} from "antd";
 
 const tagMap = new Map();
 
-tagMap.set("boarding_go", <Tag color="cyan">走读</Tag>);
-tagMap.set("boarding_half", <Tag color="blue">半托</Tag>);
-tagMap.set("boarding_all", <Tag color="geekblue">全托</Tag>);
-tagMap.set("traffic_0", <span/>);
-tagMap.set("traffic_1", <Tag color="lime">交通费用</Tag>);
+tagMap.set("boarding_go", <Tag key="boarding_go" color="cyan">走读</Tag>);
+tagMap.set("boarding_half", <Tag key="boarding_half" color="blue">半托</Tag>);
+tagMap.set("boarding_all", <Tag key="boarding_all" color="geekblue">全托</Tag>);
+tagMap.set("traffic_1", <Tag key="traffic_1" color="lime">交通费用</Tag>);
 
 
 /**
  *   标签组件
  * @param record
- * @constructor
  */
-function DetailTags({record}) {
+function detailTags(record) {
     if ("charge_item" === record.chargeType) {
-        return <span/>;
+        return null;
     }
     const tags = [];
     tags.push(tagMap.get("traffic_" + record.traffic), null);
     record.boardingCodes.split(",").forEach(key => {
-        tags.push(tagMap.get(key, null))
+        const tag = tagMap.get(key);
+        if(tag){
+            tags.push(tag)
+        }
     });
     return tags
 }
@@ -49,12 +50,16 @@ export function chargeTableColumns() {
             dataIndex: 'id',
             key: 'id',
             width: 250,
-            render: (text, record) => <DetailTags record={record}/>
+            render: (text, record) => detailTags(record)
         },
         {
             title: '描述',
-            dataIndex: 'description',
-            key: 'description',
-        },
-    ];
+            dataIndex:
+                'description',
+            key:
+                'description',
+        }
+        ,
+    ]
+        ;
 }
