@@ -7,8 +7,6 @@ import * as sysDataService from "../services/sysDataService";
 export default {
   namespace: 'chargePersonnel',
   state: {
-    // 是否初始化
-    isInit: false,
     //项目id
     projectId: null,
     // 下拉框选择数据
@@ -56,7 +54,7 @@ export default {
     //初始化数据
     * initData({payload: {projectId}}, {select, call, put}) {
       //存在数据则不查询
-      const {isInit, searchValues, personnelPage, personnelPageSize} = yield select(state => state.chargePersonnel);
+      const {searchValues, personnelPage, personnelPageSize} = yield select(state => state.chargePersonnel);
       // 初始化选择库数据
       const {data} = yield call(projectService.queryProject, {}, 1, 20);
       yield put({
@@ -65,10 +63,7 @@ export default {
           projectSelectedData: data.data
         }
       });
-      // 已经初始化过了则跳出
-      if (isInit) {
-        return;
-      }
+
       if (!projectId && data.data.length > 0) {
         projectId = data.data[0].id;
       }
@@ -131,7 +126,7 @@ export default {
           personnelModalVisible
         }
       });
-      const {searchValues, personnelPage, personnelPageSize} = yield select(state => state.chargePersonnel);
+      const {projectId, searchValues, personnelPage, personnelPageSize} = yield select(state => state.chargePersonnel);
       // 刷新数据
       yield put({
         type: 'getChargePersonnels',
@@ -147,24 +142,42 @@ export default {
       const {projectId, searchValues, personnelPage, personnelPageSize} = yield select(state => state.chargePersonnel);
       yield call(personnelService.deletePersonnels, personnelIds.join(","));
       yield put({
-        type: "",
+        type: "getChargePersonnels",
         payload: {
           projectId,
           searchValues,
           personnelPage,
-          personnelPageSize
+          personnelPageSize,
+          personnelSelectedRows: [],
         }
       });
     },
     // 增加减免信息
     * addReductions({payload: {personnelIds, values}}, {select, call, put}) {
       yield call(personnelService.addReductions, personnelIds.join(","), values);
-      message.info("保存成功");
+      yield put({
+        type: 'setState',
+        payload: {
+          rductionModalVisible: false
+        }
+      });
+      const {projectId, searchValues, personnelPage, personnelPageSize} = yield select(state => state.chargePersonnel);
+      // 刷新数据
+      yield put({
+        type: 'getChargePersonnels',
+        payload: {
+          projectId,
+          searchValues,
+          personnelPage,
+          personnelPageSize
+        }
+      })
+
     },
 
     // 打开查看减免信息弹窗
     * getReductionsByPersonnelId({payload: {personnelId}}, {select, call, put}) {
-      const reductionList = yield call(personnelService.getReductionsByPersonnelId, personnelId);
+      const {data: reductionList} = yield call(personnelService.getReductionsByPersonnelId, personnelId);
       yield put({
         type: 'setState',
         payload: {
@@ -188,7 +201,8 @@ export default {
     * openPersonnelModal({payload: {personnelId}}, {select, call, put}) {
       let currPersonnelRecord = {};
       if (personnelId) {
-        currPersonnelRecord = yield call(personnelService.getChargePersonnelById, personnelId);
+        const {data} = yield call(personnelService.getChargePersonnelById, personnelId);
+        currPersonnelRecord = data;
       }
       // 查询寄读方式,查询路线,班级
       const {data: {boardingData, routeData, classData}} = yield call(sysDataService.getSysRouteAndBoardingAndClassData);
@@ -223,9 +237,7 @@ export default {
   subscriptions: {
     setup({dispatch, history}) {
       return history.listen(({pathname, query}) => {
-        if (pathname === '/charge-system/charge-management/charge-personnel') {
-          dispatch({type: 'initData', payload: {}})
-        }
+
       })
     }
   }

@@ -1,12 +1,11 @@
 import request from '../../../utils/request'
 
-
 /**
  *  删除减免信息
  * @param reductionId
  */
-export function deleteReduction(reductionId) {
-
+export async function deleteReduction(reductionId) {
+  return request(`/charge/personnel-reduction/deletes/del-by-id`, "DELETE", {reductionIds: reductionId})
 }
 
 
@@ -14,8 +13,8 @@ export function deleteReduction(reductionId) {
  *   减免信息
  * @param personnelId
  */
-export function getReductionsByPersonnelId(personnelId) {
-
+export async function getReductionsByPersonnelId(personnelId) {
+  return request(`/charge/personnel-reduction/gets/gets-by-personnel-id`, "GET", {personnelId})
 }
 
 
@@ -23,7 +22,7 @@ export function getReductionsByPersonnelId(personnelId) {
  *   更新数据
  * @param values
  */
-export function updateChargePersonnel(values) {
+export async function updateChargePersonnel(values) {
   return request(`/charge/charge-personnel/updates/update-by-id`, "PUT", {...values})
 }
 
@@ -33,7 +32,7 @@ export function updateChargePersonnel(values) {
  * @param projectId
  * @param values
  */
-export function createPersonnel(projectId, values) {
+export async function createPersonnel(projectId, values) {
   return request(`/charge/charge-personnel/posts`, "POST", {...values, projectId})
 }
 
@@ -43,7 +42,7 @@ export function createPersonnel(projectId, values) {
  * @param personnelIds
  * @param values
  */
-export function addReductions(personnelIds, values) {
+export async function addReductions(personnelIds, values) {
   return request(`/charge/personnel-reduction/posts/post-by-personnel-ids?personnelIds=${personnelIds}`, "POST", {...values})
 }
 
@@ -55,19 +54,21 @@ export function addReductions(personnelIds, values) {
  * @param personnelPage
  * @param personnelPageSize
  */
-export function getChargePersonnels(projectId, searchValues, personnelPage, personnelPageSize) {
-  return {
-    data: [],
-    total: 0
-  }
+export async function getChargePersonnels(projectId, searchValues, personnelPage, personnelPageSize) {
+  return request(`/charge/charge-personnel/gets/page`, "GET", {
+    ...searchValues,
+    projectId,
+    page: personnelPage,
+    pageSize: personnelPageSize
+  })
 }
 
 /**
  * 删除
  * @param personnelIds
  */
-export function deletePersonnels(personnelIds) {
-
+export async function deletePersonnels(personnelIds) {
+  return request(`/charge/charge-personnel/deletes/del-by-id`, "DELETE", {personnelIds})
 }
 
 
@@ -75,8 +76,8 @@ export function deletePersonnels(personnelIds) {
  *  根据id查询数据
  * @param personnelId
  */
-export function getChargePersonnelById(personnelId) {
-
+export async function getChargePersonnelById(personnelId) {
+  return request(`/charge/charge-personnel/gets/get-by-id`, "GET", {personnelId})
 }
 
 

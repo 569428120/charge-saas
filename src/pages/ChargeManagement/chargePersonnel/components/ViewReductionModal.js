@@ -12,26 +12,26 @@ const tableColumns = (onRowDelete) => {
   return [
     {
       title: '操作人',
-      dataIndex: 'studentId',
-      key: 'studentId',
+      dataIndex: 'operationName',
+      key: 'operationName',
       width: '12%',
     },
     {
       title: '操作时间',
-      dataIndex: 'gradeName',
-      key: 'gradeName',
+      dataIndex: 'createTime',
+      key: 'createTime',
       width: '12%',
     },
     {
       title: '减免金额（元）',
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'amount',
+      key: 'amount',
       width: '8%',
     },
     {
       title: '描述',
-      dataIndex: 'contactInfos',
-      key: 'contactInfos',
+      dataIndex: 'description',
+      key: 'description',
       width: '30%',
     },
     {
@@ -42,14 +42,14 @@ const tableColumns = (onRowDelete) => {
          <Popconfirm
            title="确认删除?"
            onConfirm={() => {
-             onRowDelete(record.projectId, text)
+             onRowDelete(record.personnelId, text)
            }}
            onCancel={() => {
            }}
            okText="是"
            cancelText="否"
          >
-                 <a href="#">删除</a>|
+                 <a href="#">删除</a>
                 </Popconfirm>
             </span>
     },
@@ -90,14 +90,14 @@ class ViewReductionModal extends Component {
     };
 
     return <Modal
-      title="缴费人员"
+      title="减免信息"
       width={600}
       destroyOnClose={true}
       visible={this.props.visible}
       onOk={this.props.onOk}
       onCancel={this.props.onCancel}
     >
-      <Table {...tableProps}/>
+      <Table {...tableProps} pagination={false}/>
     </Modal>;
   }
 }

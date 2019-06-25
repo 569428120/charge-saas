@@ -16,6 +16,15 @@ import ViewReductionModal from "./components/ViewReductionModal";
  */
 class ChargeProject extends React.Component {
 
+
+  componentDidMount() {
+    //初始化数据
+    this.props.dispatch({
+      type: "chargePersonnel/initData",
+      payload: {}
+    });
+  };
+
   /**
    *  搜索
    * @param values
@@ -42,7 +51,7 @@ class ChargeProject extends React.Component {
       type: "chargePersonnel/getChargePersonnels",
       payload: {
         projectId,
-        searchValues,
+        searchValues: {...searchValues, projectId},
         personnelPage: 1,
         personnelPageSize
       }
@@ -176,13 +185,12 @@ class ChargeProject extends React.Component {
    */
   onReduction = () => {
     const {personnelSelectedRows} = this.props;
-    /*
+
     if (personnelSelectedRows.length <= 0) {
       message.info("请选择需要减免的人员信息");
       return;
     }
 
-     */
     this.openReductionModal();
   };
 
@@ -275,6 +283,7 @@ class ChargeProject extends React.Component {
       isChargeInventoryCheck: true
     })
   };
+
 
   /**
    * 收费清单取消按钮
@@ -387,8 +396,9 @@ class ChargeProject extends React.Component {
     const tableProps = {
       className: app_styles.table,
       dataSource: this.props.personnelData,
+      pagination: false,
       loading: this.props.loading.effects['chargePersonnel/getChargePersonnels'],
-      columns: config.tableColumns(this.onRowUpdate, this.onView, this.onOpenChargeInventory),
+      columns: config.tableColumns(this.onView, this.onOpenChargeInventory, this.openViewReductionModal),
       bordered: true,
       rowKey: "id",
       rowSelection: {

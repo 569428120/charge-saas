@@ -80,7 +80,7 @@ const getClassOptions = (classData) => {
 
   const options = [];
   classMap.forEach((v, k) => {
-    options.push(<OptGroup label={k}>
+    options.push(<OptGroup key={k} label={k}>
       {
         v.map(item => {
           return <Option key={item.classCode} value={item.classCode}>{item.className}</Option>
@@ -128,9 +128,9 @@ class PersonnelModal extends Component {
 
   render() {
     const {getFieldDecorator} = this.props.form;
-    const {boardingData, routeData, classData, dataSource} = this.props;
+    const {boardingData, routeData, classData} = this.props;
     // 回显数据
-    const {name, studentId, classCode, boardingCode, ride, routesCode} = dataSource;
+    const {name, studentId, classCode, boardingCode, ride, routesCode} = this.props.dataSource;
     let rides = [ride || false];
     if (routesCode) {
       rides.push(routesCode)
