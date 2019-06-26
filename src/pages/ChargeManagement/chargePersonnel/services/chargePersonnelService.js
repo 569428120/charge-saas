@@ -1,6 +1,34 @@
 import request from '../../../utils/request'
 
 /**
+ *  查询联系人
+ * @param personnelId
+ */
+export function getContactInfosByPersonnelId(personnelId) {
+  return request(`/charge/personnel-contact/gets/gets-by-personnel-id`, "GET", {personnelId})
+}
+
+
+/**
+ *  删除联系人
+ * @param contactInfoId
+ */
+export function deleteContactInfo(contactInfoId) {
+  return request(`/charge/personnel-contact/deletes/del-by-id`, "DELETE", {contactIds: contactInfoId})
+}
+
+
+/**
+ *  添加联系人
+ * @param personnelId
+ * @param values
+ */
+export function addContactInfo(personnelId, values) {
+  return request(`/charge/personnel-contact/posts/post-by-personnel-id?personnelId=${personnelId}`, "POST", {...values})
+}
+
+
+/**
  *  删除减免信息
  * @param reductionId
  */

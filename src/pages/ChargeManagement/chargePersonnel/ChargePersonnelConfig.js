@@ -7,7 +7,7 @@ import tagMap from "../../utils/TagConfig"
  * 参数设置
  * @returns {Array}
  */
-export function tableColumns(onView, onOpenChargeInventory, onViewReduction) {
+export function tableColumns(onView, onOpenChargeInventory, onViewReduction, openViewContactInfo) {
   return [
     {
       title: '学号',
@@ -42,7 +42,7 @@ export function tableColumns(onView, onOpenChargeInventory, onViewReduction) {
                     {
                       record.contacts[0].number
                     }
-          (<a href="#">{record.contacts.length}</a>)
+          (<a href="#" onClick={() => openViewContactInfo(record.id)}>{record.contacts.length}</a>)
                 </span>)
       }
     },
@@ -78,6 +78,12 @@ export function tableColumns(onView, onOpenChargeInventory, onViewReduction) {
       dataIndex: 'status',
       key: 'status',
       width: '8%',
+      render: (text, record) => {
+        let tabs = [];
+        tabs.push(tagMap.get(record.chargeStatus));
+        tabs.push(tagMap.get(record.noticeStatus));
+        return <span>{tabs}</span>
+      }
     },
     {
       title: '操作',

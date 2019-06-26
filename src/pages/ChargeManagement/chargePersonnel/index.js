@@ -10,6 +10,9 @@ import ChargeInventoryModal from "./components/ChargeInventoryModal";
 import app_styles from "../../app.less";
 import ReductionModal from "./components/ReductionModal";
 import ViewReductionModal from "./components/ViewReductionModal";
+import ContactInfoModal from "./components/ContactInfoModal";
+import ViewContactInfoModal from "./components/ViewContactInfoModal";
+import NoticeModal from "./components/NoticeModal";
 
 /**
  * 收费人员详情
@@ -95,6 +98,74 @@ class ChargeProject extends React.Component {
       payload: {
         personnelId,
         reductionId
+      }
+    });
+  };
+
+  /**
+   *  添加联系人
+   * @param values
+   */
+  onContactInfoModalOk = (values) => {
+    const {personnelSelectedRows} = this.props;
+    if (personnelSelectedRows <= 0) {
+      message.warn("没有选择人员");
+      return
+    }
+    this.props.dispatch({
+      type: "chargePersonnel/addContactInfo",
+      payload: {
+        personnelId: personnelSelectedRows[0].id,
+        values
+      }
+    });
+  };
+
+  /**
+   *  关闭
+   */
+  onContactInfoModalCancel = () => {
+    this.props.dispatch({
+      type: "chargePersonnel/setState",
+      payload: {
+        contactInfoModalVisible: false,
+        currPersonnelRecord: {}
+      }
+    });
+  };
+
+  /**
+   *  删除联系人
+   * @param personnelId
+   * @param contactInfoId
+   */
+  onViewContactInfoModalRowDelete = (personnelId, contactInfoId) => {
+    this.props.dispatch({
+      type: "chargePersonnel/deleteContactInfo",
+      payload: {
+        personnelId,
+        contactInfoId
+      }
+    });
+  };
+
+  /**
+   *   发送消息
+   * @param values
+   */
+  onNoticeModalOk = (values) => {
+
+  };
+
+
+  /**
+   *  关闭弹窗
+   */
+  onNoticeModalCancel = () => {
+    this.props.dispatch({
+      type: "chargePersonnel/setState",
+      payload: {
+        noticeModalVisible: false
       }
     });
   };
@@ -207,15 +278,30 @@ class ChargeProject extends React.Component {
       message.info("只允许给单个人员添加联系方式");
       return;
     }
-    this.openContactInfoModal(personnelSelectedRows[0].id);
+    this.props.dispatch({
+      type: "chargePersonnel/setState",
+      payload: {
+        contactInfoModalVisible: true,
+        currPersonnelRecord: personnelSelectedRows[0],
+      }
+    });
   };
 
-
   /**
-   * 其他按钮回调
+   *  发送通知按钮
    */
-  onOther = () => {
-
+  onSendNotice = () => {
+    const {personnelSelectedRows} = this.props;
+    if (personnelSelectedRows.length <= 0) {
+      message.info("请选择人员信息");
+      return;
+    }
+    this.props.dispatch({
+      type: "chargePersonnel/setState",
+      payload: {
+        noticeModalVisible: true,
+      }
+    });
   };
 
   /**
@@ -342,14 +428,33 @@ class ChargeProject extends React.Component {
   };
 
   /**
-   *  增加联系人
+   *  查看
    * @param personnelId
    */
-  openContactInfoModal = (personnelId) => {
+  openViewContactInfoModal = (personnelId) => {
     this.props.dispatch({
-      type: "chargePersonnel/openContactInfoModal",
+      type: "chargePersonnel/setState",
+      payload: {
+        viewContactInfoModalVisible: true,
+      }
+    });
+    this.props.dispatch({
+      type: "chargePersonnel/getContactInfoByPersonnelId",
       payload: {
         personnelId,
+      }
+    });
+  };
+
+  /**
+   *  关闭联系人
+   */
+  closeViewContactInfoModal = () => {
+    this.props.dispatch({
+      type: "chargePersonnel/setState",
+      payload: {
+        viewContactInfoModalVisible: false,
+        contactInfoList: [],
       }
     });
   };
@@ -392,13 +497,38 @@ class ChargeProject extends React.Component {
       onCancel: this.closeViewReductionModal
     };
 
+    // 联系人添加窗口参数
+    const contactInfoModalProps = {
+      visible: this.props.contactInfoModalVisible,
+      dataSource: this.props.currPersonnelRecord,
+      onOk: this.onContactInfoModalOk,
+      onCancel: this.onContactInfoModalCancel
+    };
+
+    // 联系人查看窗口参数
+    const viewContactInfoModalProps = {
+      visible: this.props.viewContactInfoModalVisible,
+      loading: this.props.loading.effects['chargePersonnel/getContactInfoByPersonnelId'],
+      dataSource: this.props.contactInfoList,
+      onRowDelete: this.onViewContactInfoModalRowDelete,
+      onOk: this.closeViewContactInfoModal,
+      onCancel: this.closeViewContactInfoModal
+    };
+
+    // 通知弹窗
+    const noticeModalProps = {
+      visible: this.props.noticeModalVisible,
+      onOk: this.onNoticeModalOk,
+      onCancel: this.onNoticeModalCancel
+    };
+
     // 表格参数
     const tableProps = {
       className: app_styles.table,
       dataSource: this.props.personnelData,
       pagination: false,
       loading: this.props.loading.effects['chargePersonnel/getChargePersonnels'],
-      columns: config.tableColumns(this.onView, this.onOpenChargeInventory, this.openViewReductionModal),
+      columns: config.tableColumns(this.onView, this.onOpenChargeInventory, this.openViewReductionModal, this.openViewContactInfoModal),
       bordered: true,
       rowKey: "id",
       rowSelection: {
@@ -440,6 +570,9 @@ class ChargeProject extends React.Component {
       <SearchList {...searchListProps}/>
       <ReductionModal {...reductionModalProps} />
       <ViewReductionModal {...viewReductionModalProps} />
+      <ContactInfoModal {...contactInfoModalProps}/>
+      <ViewContactInfoModal {...viewContactInfoModalProps}/>
+      <NoticeModal {...noticeModalProps} />
       <OperationButtonList onImport={this.onImport}
                            onImportContactInfo={this.onImportContactInfo}
                            onAddPersonnel={this.onAddPersonnel}

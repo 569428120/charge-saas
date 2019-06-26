@@ -21,6 +21,10 @@ export default {
     viewReductionModalVisible: false,
     // 联系人弹窗
     contactInfoModalVisible: false,
+    // 联系人查看
+    viewContactInfoModalVisible: false,
+    // 通知弹窗
+    noticeModalVisible: false,
     // 个人收费清单弹窗
     chargeInventoryModal: false,
     // 个人收费清单弹窗是否支持选择
@@ -39,6 +43,8 @@ export default {
     currPersonnelRecord: {},
     // 减免数据列表
     reductionList: [],
+    //联系人列表
+    contactInfoList: [],
   },
   reducers: {
     /**
@@ -172,7 +178,6 @@ export default {
           personnelPageSize
         }
       })
-
     },
 
     // 打开查看减免信息弹窗
@@ -218,18 +223,50 @@ export default {
       });
     },
 
+    // 添加联系人
+    * addContactInfo({payload: {personnelId, values}}, {select, call, put}) {
+      yield call(personnelService.addContactInfo, personnelId, values);
+      yield put({
+        type: 'setState',
+        payload: {
+          contactInfoModalVisible: false
+        }
+      });
+      const {projectId, searchValues, personnelPage, personnelPageSize} = yield select(state => state.chargePersonnel);
+      // 刷新数据
+      yield put({
+        type: 'getChargePersonnels',
+        payload: {
+          projectId,
+          searchValues,
+          personnelPage,
+          personnelPageSize
+        }
+      })
+    },
+
+    // 删除联系人
+    * deleteContactInfo({payload: {personnelId, contactInfoId}}, {select, call, put}) {
+      yield call(personnelService.deleteContactInfo, contactInfoId);
+      yield put({
+        type: 'getContactInfoByPersonnelId',
+        payload: {
+          personnelId
+        }
+      });
+    },
 
     // 打开联系人弹窗
-    * openContactInfoModal({payload: {personnelId}}, {select, call, put}) {
+    * getContactInfoByPersonnelId({payload: {personnelId}}, {select, call, put}) {
       let contactInfoList = [];
       if (personnelId) {
-        contactInfoList = yield call(personnelService.getContactInfosByPersonnelId, personnelId);
+        const {data} = yield call(personnelService.getContactInfosByPersonnelId, personnelId);
+        contactInfoList = data;
       }
       yield put({
         type: 'setState',
         payload: {
-          contactInfoList,
-          contactInfoModalVisible: true
+          contactInfoList
         }
       });
     },

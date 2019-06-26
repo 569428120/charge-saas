@@ -135,6 +135,7 @@ class PersonnelModal extends Component {
     if (routesCode) {
       rides.push(routesCode)
     }
+
     return <Modal
       title="缴费人员"
       width={600}
@@ -168,7 +169,7 @@ class PersonnelModal extends Component {
             rules: [
               {required: true, message: '班级不能为空'}
             ]
-          })(<Select defaultValue="lucy" style={{width: '70%'}}>
+          })(<Select style={{width: '70%'}}>
               {
                 getClassOptions(classData)
               }
