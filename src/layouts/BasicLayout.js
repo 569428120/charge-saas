@@ -54,7 +54,8 @@ const query = {
 class BasicLayout extends React.PureComponent {
   constructor(props) {
     super(props);
-    const {routes} = props.route, routeKey = '/home/home', tabName = '首页'; // routeKey 为设置首页设置 试试 '/dashboard/analysis' 或其他key值
+    // routeKey 为设置首页设置 试试 '/dashboard/analysis' 或其他key值
+    const {routes} = props.route, systemKey = '/charge-system', routeKey = '/home/home', tabName = '首页';
     const tabLists = this.updateTree(routes);
     let tabList = [];
     tabLists.map((v) => {
@@ -67,12 +68,15 @@ class BasicLayout extends React.PureComponent {
       }
     });
     this.state = ({
+      tabLists,
       tabList: tabList,
       tabListKey: [routeKey],
       // 标签页
       activeKey: routeKey,
       // 菜单
-      routeKey
+      routeKey,
+      // 系统列表
+      systemKey
     })
 
     this.getPageTitle = memoizeOne(this.getPageTitle);
@@ -85,12 +89,18 @@ class BasicLayout extends React.PureComponent {
       dispatch,
       route: {routes, authority},
     } = this.props;
+    console.log(this.props);
     dispatch({
       type: 'user/fetchCurrent',
     });
     dispatch({
       type: 'setting/getSetting',
     });
+
+    dispatch({
+      type: 'system/getSystemList',
+    });
+
     dispatch({
       type: 'menu/getMenuData',
       payload: {routes, authority},
@@ -195,10 +205,9 @@ class BasicLayout extends React.PureComponent {
   };
 
   onHandlePage = (e) => {//点击左侧菜单
-    const {menuData} = this.props, {key} = e;
-    const tabLists = this.updateTreeList(menuData);
-    const {tabListKey, tabList} = this.state
-    router.push(key)
+    const {key} = e;
+    const {tabListKey, tabList, tabLists} = this.state;
+    router.push(key);
     this.setState({
       activeKey: key
     })
@@ -224,9 +233,39 @@ class BasicLayout extends React.PureComponent {
     // })
   }
 
+  findSystemKey = (systemList, key) => {
+    let systemKey = null;
+    systemList.forEach(item => {
+      if (key.startsWith(item.key)) {
+        systemKey = item.key;
+      }
+    });
+    return systemKey;
+  };
+
   // 切换 tab页 router.push(key);
   onChange = key => {
-    this.setState({activeKey: key});
+    const {systemList} = this.props;
+    let {systemKey} = this.state;
+    let newSystemKey = null;
+    // 切换系统
+    if (!key.startsWith(systemKey)) {
+      newSystemKey = this.findSystemKey(systemList, key)
+    }
+    // 刷新菜单数据
+    if (newSystemKey) {
+      systemKey = newSystemKey;
+      this.props.dispatch({
+        type: 'menu/getMenuDataBySystemKey',
+        payload: {
+          systemKey: newSystemKey
+        },
+      });
+    }
+    this.setState({
+      activeKey: key,
+      systemKey
+    });
     router.push(key)
   };
 
@@ -314,12 +353,13 @@ class BasicLayout extends React.PureComponent {
       isMobile,
       children,
       menuData,
+      systemList,
       breadcrumbNameMap,
       route: {routes},
       fixedHeader,
       hidenAntTabs,
     } = this.props;
-    let {activeKey, routeKey} = this.state;
+    let {activeKey, routeKey, systemKey} = this.state;
     if (pathname === '/') {
       // router.push(routeKey)
       activeKey = routeKey
@@ -351,6 +391,7 @@ class BasicLayout extends React.PureComponent {
             theme={navTheme}
             onCollapse={this.handleMenuCollapse}
             menuData={menuData}
+            systemList={systemList}
             isMobile={isMobile}
             {...this.props}
             onHandlePage={this.onHandlePage}
@@ -364,6 +405,8 @@ class BasicLayout extends React.PureComponent {
         >
           <Header
             menuData={menuData}
+            systemList={systemList}
+            systemKey={systemKey}
             handleMenuCollapse={this.handleMenuCollapse}
             logo={logo}
             isMobile={isMobile}
@@ -419,11 +462,12 @@ class BasicLayout extends React.PureComponent {
   }
 }
 
-export default connect(({global, setting, menu}) => ({
+export default connect(({global, setting, menu, system}) => ({
   collapsed: global.collapsed,
   layout: setting.layout,
   menuData: menu.menuData,
   breadcrumbNameMap: menu.breadcrumbNameMap,
+  systemList: system.systemList,
   ...setting,
 }))(props => (
   <Media query="(max-width: 599px)">

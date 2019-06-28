@@ -1,9 +1,9 @@
 import memoizeOne from 'memoize-one';
 import isEqual from 'lodash/isEqual';
-import { formatMessage } from 'umi/locale';
+import {formatMessage} from 'umi/locale';
 import Authorized from "@/utils/Authorized";
 
-const { check } = Authorized;
+const {check} = Authorized;
 
 // Conversion router to menu.
 function formatter(data, parentAuthority, parentName) {
@@ -22,7 +22,7 @@ function formatter(data, parentAuthority, parentName) {
 
       const result = {
         ...item,
-        name: formatMessage({ id: locale, defaultMessage: item.name }),
+        name: formatMessage({id: locale, defaultMessage: item.name}),
         locale,
         authority: item.authority || parentAuthority,
       };
@@ -51,6 +51,22 @@ const getSubMenu = item => {
     };
   }
   return item;
+};
+
+/**
+ *
+ * @param menuData
+ * @param systemKey
+ */
+const filterMenuBySystemKey = (menuData, systemKey) => {
+  if (!menuData) {
+    return [];
+  }
+  if (!systemKey || systemKey === "") {
+    return menuData;
+  }
+
+  return menuData.filter(item => item.path.startsWith(systemKey))
 };
 
 /**
@@ -96,16 +112,26 @@ export default {
   },
 
   effects: {
-    *getMenuData({ payload }, { put }) { // 服务器端获取菜单数据
-      const { routes, authority } = payload;
+    * getMenuData({payload}, {put}) { // 服务器端获取菜单数据
+      const {routes, authority} = payload;
       const menuData = filterMenuData(memoizeOneFormatter(routes, authority));
-      console.log(menuData);
       const breadcrumbNameMap = memoizeOneGetBreadcrumbNameMap(menuData);
       yield put({
         type: 'save',
-        payload: { menuData, breadcrumbNameMap },
+        payload: {menuData, breadcrumbNameMap},
       });
     },
+    // 刷新菜单
+    * getMenuDataBySystemKey({payload: {systemKey}}, {select, put}) {
+      const {menuData} = yield select(state => state.menu);
+      yield put({
+        type: 'save',
+        payload: {
+          menuData: filterMenuBySystemKey(menuData, systemKey)
+        },
+      });
+
+    }
   },
 
   reducers: {

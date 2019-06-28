@@ -1,22 +1,23 @@
-import React, { PureComponent } from 'react';
-import { formatMessage } from 'umi/locale';
-import { Layout, message } from 'antd';
+import React, {PureComponent} from 'react';
+import {formatMessage} from 'umi/locale';
+import {Layout, message} from 'antd';
 import Animate from 'rc-animate';
-import { connect } from 'dva';
+import {connect} from 'dva';
 import router from 'umi/router';
 import GlobalHeader from '@/components/GlobalHeader';
 import TopNavHeader from '@/components/TopNavHeader';
 import styles from './Header.less';
 
-const { Header } = Layout;
+const {Header} = Layout;
 
 class HeaderView extends PureComponent {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       visible: true,
     };
   }
+
   static getDerivedStateFromProps(props, state) {
     if (!props.autoHideHeader && !state.visible) {
       return {
@@ -27,7 +28,7 @@ class HeaderView extends PureComponent {
   }
 
   componentDidMount() {
-    document.addEventListener('scroll', this.handScroll, { passive: true });
+    document.addEventListener('scroll', this.handScroll, {passive: true});
   }
 
   componentWillUnmount() {
@@ -35,8 +36,8 @@ class HeaderView extends PureComponent {
   }
 
   getHeadWidth = () => {
-    const { isMobile, collapsed, setting } = this.props;
-    const { fixedHeader, layout } = setting;
+    const {isMobile, collapsed, setting} = this.props;
+    const {fixedHeader, layout} = setting;
     if (isMobile || !fixedHeader || layout === 'topmenu') {
       return '100%';
     }
@@ -45,33 +46,33 @@ class HeaderView extends PureComponent {
 
   handleNoticeClear = type => {
     message.success(
-      `${formatMessage({ id: 'component.noticeIcon.cleared' })} ${formatMessage({
+      `${formatMessage({id: 'component.noticeIcon.cleared'})} ${formatMessage({
         id: `component.globalHeader.${type}`,
       })}`
     );
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'global/clearNotices',
       payload: type,
     });
   };
 
-  handleMenuClick = ({ key }) => {
-    const { dispatch } = this.props;
+  handleMenuClick = ({key}) => {
+    const {dispatch} = this.props;
     const {onHandlePage} = this.props.location;
     if (key === 'userCenter') {
       router.push('/account/center');
-      onHandlePage({key:'/account/center'});
+      onHandlePage({key: '/account/center'});
       return;
     }
     if (key === 'triggerError') {
       router.push('/exception/trigger');
-      onHandlePage({key:'/exception/trigger'});
+      onHandlePage({key: '/exception/trigger'});
       return;
     }
     if (key === 'userinfo') {
       router.push('/account/settings');
-      onHandlePage({key:'/account/settings'});
+      onHandlePage({key: '/account/settings'});
       return;
     }
     if (key === 'logout') {
@@ -81,9 +82,17 @@ class HeaderView extends PureComponent {
     }
   };
 
+  /**
+   *  点击系统
+   */
+  handleSystemClick = (key) => {
+     // 刷新菜单
+
+  };
+
   handleNoticeVisibleChange = visible => {
     if (visible) {
-      const { dispatch } = this.props;
+      const {dispatch} = this.props;
       dispatch({
         type: 'global/fetchNotices',
       });
@@ -91,8 +100,8 @@ class HeaderView extends PureComponent {
   };
 
   handScroll = () => {
-    const { autoHideHeader } = this.props;
-    const { visible } = this.state;
+    const {autoHideHeader} = this.props;
+    const {visible} = this.state;
     if (!autoHideHeader) {
       return;
     }
@@ -120,13 +129,13 @@ class HeaderView extends PureComponent {
   };
 
   render() {
-    const { isMobile, handleMenuCollapse, setting } = this.props;
-    const { navTheme, layout, fixedHeader } = setting;
-    const { visible } = this.state;
+    const {isMobile, handleMenuCollapse, setting} = this.props;
+    const {navTheme, layout, fixedHeader} = setting;
+    const {visible} = this.state;
     const isTop = layout === 'topmenu';
     const width = this.getHeadWidth();
     const HeaderDom = visible ? (
-      <Header style={{ padding: 0, width }} className={fixedHeader ? styles.fixedHeader : ''}>
+      <Header style={{padding: 0, width}} className={fixedHeader ? styles.fixedHeader : ''}>
         {isTop && !isMobile ? (
           <TopNavHeader
             theme={navTheme}
@@ -143,6 +152,7 @@ class HeaderView extends PureComponent {
             onNoticeClear={this.handleNoticeClear}
             onMenuClick={this.handleMenuClick}
             onNoticeVisibleChange={this.handleNoticeVisibleChange}
+            onSystemClick={this.handleSystemClick}
             {...this.props}
           />
         )}
@@ -156,7 +166,7 @@ class HeaderView extends PureComponent {
   }
 }
 
-export default connect(({ user, global, setting, loading }) => ({
+export default connect(({user, global, setting, menu, loading}) => ({
   currentUser: user.currentUser,
   collapsed: global.collapsed,
   fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],

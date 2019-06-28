@@ -5,6 +5,7 @@ import Debounce from 'lodash-decorators/debounce';
 import styles from './index.less';
 import RightContent from './RightContent';
 
+
 export default class GlobalHeader extends PureComponent {
   componentWillUnmount() {
     this.triggerResizeEvent.cancel();
@@ -25,8 +26,22 @@ export default class GlobalHeader extends PureComponent {
     this.triggerResizeEvent();
   };
 
+
+
+  /**
+   *   系统列表
+   */
+  getSystemList = () => {
+    const {systemList} = this.props;
+    return systemList.map(item => {
+      return <span key={item.path} className={styles.trigger}>{item.name}</span>
+    });
+  };
+
   render() {
     const {collapsed, isMobile, logo} = this.props;
+
+    const systemList = this.getSystemList();
     return (
       <div className={styles.header}>
         {isMobile && (
@@ -37,12 +52,7 @@ export default class GlobalHeader extends PureComponent {
         <span className={styles.trigger} onClick={this.toggle}>
           <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'}/>
         </span>
-        <span className={styles.trigger}>
-          收费系统
-        </span>
-        <span className={styles.trigger}>
-          权限管理
-        </span>
+        {systemList}
         <RightContent {...this.props} />
       </div>
     );
