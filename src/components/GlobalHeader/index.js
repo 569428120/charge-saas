@@ -27,21 +27,24 @@ export default class GlobalHeader extends PureComponent {
   };
 
 
-
   /**
    *   系统列表
    */
-  getSystemList = () => {
-    const {systemList} = this.props;
+  getSystemList = (onSystemClick) => {
+    const {systemList, systemKey} = this.props;
     return systemList.map(item => {
-      return <span key={item.path} className={styles.trigger}>{item.name}</span>
+      if (item.key === systemKey) {
+        return <span key={item.key} className={styles.trigger_select}>{item.name}</span>
+      }
+      return <span key={item.key} onClick={() => onSystemClick(item.key, item.path)}
+                   className={styles.trigger}>{item.name}</span>
     });
   };
 
   render() {
-    const {collapsed, isMobile, logo} = this.props;
+    const {collapsed, isMobile, logo, onSystemClick} = this.props;
 
-    const systemList = this.getSystemList();
+    const systemList = this.getSystemList(onSystemClick);
     return (
       <div className={styles.header}>
         {isMobile && (

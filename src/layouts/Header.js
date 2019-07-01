@@ -85,9 +85,12 @@ class HeaderView extends PureComponent {
   /**
    *  点击系统
    */
-  handleSystemClick = (key) => {
-     // 刷新菜单
-
+  handleSystemClick = (key, path) => {
+    // 刷新菜单
+    const {onSystemClick} = this.props;
+    if (onSystemClick) {
+      onSystemClick(key, path);
+    }
   };
 
   handleNoticeVisibleChange = visible => {
@@ -166,7 +169,7 @@ class HeaderView extends PureComponent {
   }
 }
 
-export default connect(({user, global, setting, menu, loading}) => ({
+export default connect(({user, global, setting, loading}) => ({
   currentUser: user.currentUser,
   collapsed: global.collapsed,
   fetchingMoreNotices: loading.effects['global/fetchMoreNotices'],

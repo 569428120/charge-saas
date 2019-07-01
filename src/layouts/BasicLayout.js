@@ -51,6 +51,7 @@ const query = {
   },
 };
 
+
 class BasicLayout extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -89,7 +90,6 @@ class BasicLayout extends React.PureComponent {
       dispatch,
       route: {routes, authority},
     } = this.props;
-    console.log(this.props);
     dispatch({
       type: 'user/fetchCurrent',
     });
@@ -100,10 +100,10 @@ class BasicLayout extends React.PureComponent {
     dispatch({
       type: 'system/getSystemList',
     });
-
+    const {systemKey} = this.state;
     dispatch({
       type: 'menu/getMenuData',
-      payload: {routes, authority},
+      payload: {routes, authority, systemKey},
     });
   }
 
@@ -241,6 +241,27 @@ class BasicLayout extends React.PureComponent {
       }
     });
     return systemKey;
+  };
+
+  /**
+   *   点击系统
+   */
+  handleSystemClick = (key, path) => {
+    const {routes} = this.props.route;
+    console.log(routes);
+    this.props.dispatch({
+      type: 'menu/getMenuDataBySystemKey',
+      payload: {
+        systemKey: key
+      },
+    });
+    this.setState({
+      systemKey: key
+    })
+
+    this.onHandlePage({
+      key: path
+    })
   };
 
   // 切换 tab页 router.push(key);
@@ -408,6 +429,7 @@ class BasicLayout extends React.PureComponent {
             systemList={systemList}
             systemKey={systemKey}
             handleMenuCollapse={this.handleMenuCollapse}
+            onSystemClick={this.handleSystemClick}
             logo={logo}
             isMobile={isMobile}
             {...this.props}

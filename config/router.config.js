@@ -51,6 +51,7 @@ export default [
 
         ],
       },
+      //财务管理
       {
         path: '/charge-system/financial-management',
         icon: 'laptop',
@@ -61,6 +62,63 @@ export default [
             path: '/charge-system/financial-management/charge-project',
             name: '财务报表',
             component: './ChargeManagement/financialStatement/index',
+          }
+        ],
+      },
+      //基础数据
+      {
+        path: '/base-data/data-management',
+        icon: 'laptop',
+        name: '基础数据',
+        level: '1',
+        routes: [
+          {
+            path: '/base-data/data-management/class-data',
+            name: '班级数据',
+            component: './BaseDataManagement/classData/index',
+          },
+          {
+            path: '/base-data/data-management/traffic-routes',
+            name: '交通路线',
+            component: './BaseDataManagement/trafficRoutes/index',
+          }
+        ],
+      },
+      //租户管理
+      {
+        path: '/authority-management/tenant-management',
+        icon: 'user',
+        name: '租户管理',
+        level: '1',
+        routes: [
+          {
+            path: '/authority-management/tenant-management/tenant-info',
+            name: '租户信息',
+            component: './BaseDataManagement/classData/index',
+          },
+        ],
+      },
+      // 权限管理
+      {
+        path: '/authority-management/authority-data',
+        icon: 'laptop',
+        name: '权限管理',
+        level: '1',
+        routes: [
+          {
+            path: '/authority-management/authority-data/user-authority',
+            name: '用户权限',
+            component: './BaseDataManagement/trafficRoutes/index',
+          },
+          {
+            path: '/authority-management/authority-data/tenant-info',
+            name: '角色信息',
+            component: './BaseDataManagement/classData/index',
+          },
+          {
+            path: '/authority-management/authority-data/tenant-user',
+            name: '权限信息',
+            component: './BaseDataManagement/trafficRoutes/index',
           }
         ],
       },

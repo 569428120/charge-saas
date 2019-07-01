@@ -15,7 +15,7 @@ const systemData = [
     name: "权限管理",
     key: "/authority-management",
     icon: '',
-    path: "/authority-management/charge-management/charge-project"
+    path: "/authority-management"
   },
 ];
 

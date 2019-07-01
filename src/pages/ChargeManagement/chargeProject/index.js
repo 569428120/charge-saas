@@ -78,7 +78,9 @@ class ChargeProject extends React.Component {
    * 点击下载按钮事件回调
    */
   onOperationDownload = () => {
-
+    const {onHandlePage} = this.props.location;
+    console.log(onHandlePage);
+    onHandlePage({key:'/charge-system/charge-management/charge-details'});
   };
 
   /**

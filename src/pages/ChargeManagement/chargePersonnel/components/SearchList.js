@@ -2,35 +2,9 @@ import React, {Component} from 'react'
 import {Form, Button, Row, Col, Input, TreeSelect, Select} from 'antd'
 
 
-const TreeNode = TreeSelect.TreeNode;
 
 const Option = Select.Option;
 
-/**
- *   班级选择框
- * @constructor
- */
-function ClassTreeSelect({value, onChange}) {
-    return (<TreeSelect
-        showSearch
-        style={{width: 130}}
-        value={value}
-        dropdownStyle={{maxHeight: 300, overflow: 'auto'}}
-        placeholder="Please select"
-        allowClear
-        treeDefaultExpandAll
-        onChange={onChange}
-    >
-        <TreeNode value="一年级" title="一年级" key="0-1">
-            <TreeNode value="1002班" title="1002班" key="random"/>
-            <TreeNode value="1003班" title="1003班" key="random1"/>
-        </TreeNode>
-        <TreeNode value="二年级" title="二年级" key="0-2">
-            <TreeNode value="2003班" title="2003班" key="random3"/>
-            <TreeNode value="2004班" title="2004班" key="random4"/>
-        </TreeNode>
-    </TreeSelect>);
-}
 
 
 /**

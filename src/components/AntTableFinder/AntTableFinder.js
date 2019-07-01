@@ -10,7 +10,6 @@ import styles from './AntTableFinder.less';
 export default class AntTableFinder extends Component {
     constructor(props){
       super(props);
-      console.log(props)
         const {tableHeight} = this.props;
         this.state={
             count: 3,

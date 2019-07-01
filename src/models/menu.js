@@ -107,27 +107,29 @@ export default {
   namespace: 'menu',
 
   state: {
+    allMenuData: [],
     menuData: [],
     breadcrumbNameMap: {},
   },
 
   effects: {
     * getMenuData({payload}, {put}) { // 服务器端获取菜单数据
-      const {routes, authority} = payload;
-      const menuData = filterMenuData(memoizeOneFormatter(routes, authority));
+      const {routes, authority, systemKey} = payload;
+      const allMenuData = filterMenuData(memoizeOneFormatter(routes, authority));
+      const menuData = filterMenuBySystemKey(allMenuData, systemKey);
       const breadcrumbNameMap = memoizeOneGetBreadcrumbNameMap(menuData);
       yield put({
         type: 'save',
-        payload: {menuData, breadcrumbNameMap},
+        payload: {menuData, breadcrumbNameMap, allMenuData},
       });
     },
     // 刷新菜单
     * getMenuDataBySystemKey({payload: {systemKey}}, {select, put}) {
-      const {menuData} = yield select(state => state.menu);
+      const {allMenuData} = yield select(state => state.menu);
       yield put({
         type: 'save',
         payload: {
-          menuData: filterMenuBySystemKey(menuData, systemKey)
+          menuData: filterMenuBySystemKey(allMenuData, systemKey)
         },
       });
 
