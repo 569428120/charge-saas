@@ -32,13 +32,13 @@ export function projectColumns(onRowUpdate, onRowDelete) {
       title: '开始时间',
       dataIndex: 'startTime',
       key: 'startTime',
-      width: 100,
+      width: 120,
     },
     {
       title: '结束时间',
       dataIndex: 'endTime',
       key: 'endTime',
-      width: 100,
+      width: 120,
     },
     {
       title: '描述',

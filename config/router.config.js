@@ -108,17 +108,17 @@ export default [
           {
             path: '/authority-management/authority-data/user-authority',
             name: '用户权限',
-            component: './BaseDataManagement/trafficRoutes/index',
+            component: './AuthorityManagement/roleInfo/index',
           },
           {
-            path: '/authority-management/authority-data/tenant-info',
+            path: '/authority-management/authority-data/role-info',
             name: '角色信息',
-            component: './BaseDataManagement/classData/index',
+            component: './AuthorityManagement/roleInfo/index',
           },
           {
             path: '/authority-management/authority-data/tenant-user',
             name: '权限信息',
-            component: './BaseDataManagement/trafficRoutes/index',
+            component: './AuthorityManagement/roleInfo/index',
           }
         ],
       },
