@@ -1,9 +1,12 @@
 import React from "react";
-import {message} from "antd";
+import {Button, message, Switch} from "antd";
 import {connect} from "dva";
 import RoleInfoSearch from "./components/RoleInfoSearch";
 import RoleInfoOperationButton from "./components/RoleInfoOperationButton";
 import CommonTable from "../../../components/CommonTable";
+import RoleInfoModal from "./components/RoleInfoModal";
+import PropTypes from "prop-types";
+import SettingRoleModal from "./components/SettingRoleModal";
 
 
 /***
@@ -27,7 +30,7 @@ class RoleInfo extends React.Component {
 
   onOperationButtonUpdate = () => {
     const {selectedRows} = this.props;
-    if (selectedRows.length < 0) {
+    if (selectedRows.length <= 0) {
       message.info("请选择需要编辑的数据");
       return;
     }
@@ -83,6 +86,38 @@ class RoleInfo extends React.Component {
     });
   };
 
+  onValidatorName = (rule, value, callback) => {
+    this.props.dispatch({
+      type: "roleInfo/validatorName",
+      payload: {
+        value,
+        callback
+      }
+    });
+  };
+
+
+  onRoleInfoModalOk = (values, isEdit) => {
+    this.closeRoleInfoModal();
+    // 更新
+    if (isEdit) {
+      this.props.dispatch({
+        type: "roleInfo/updateRoleInfo",
+        payload: {
+          values
+        }
+      });
+      return;
+    }
+
+    this.props.dispatch({
+      type: "roleInfo/createRoleInfo",
+      payload: {
+        values
+      }
+    });
+  };
+
 
   openRoleInfoModal = (roleId) => {
     if (roleId) {
@@ -101,25 +136,66 @@ class RoleInfo extends React.Component {
     });
   };
 
+  closeRoleInfoModal = () => {
+    this.props.dispatch({
+      type: "roleInfo/setState",
+      payload: {
+        modalVisible: false
+      }
+    });
+  };
+
+  onEnable = (record, checked) => {
+    this.props.dispatch({
+      type: "roleInfo/enableRoleInfoById",
+      payload: {
+        roleInfoId: record.id,
+        checked
+      }
+    });
+  };
+
+  openSettingRoleModal = (roleInfoId) => {
+    this.props.dispatch({
+      type: "roleInfo/setState",
+      payload: {
+        settingRoleModalVisible: true
+      }
+    });
+  };
+
   tableColumns = () => {
     return [
       {
         title: '名称',
         dataIndex: 'name',
         key: 'name',
-        width: "30%",
+        width: "20%",
       },
       {
         title: '启用',
-        dataIndex: 'code',
-        key: 'code',
-        width: "30%",
+        dataIndex: 'enable',
+        key: 'enable',
+        width: "10%",
+        render: (text, record) => {
+          return <Switch checked={text} onChange={(checked) => this.onEnable(record, checked)}/>
+        }
       },
       {
         title: '描述',
         dataIndex: 'description',
         key: 'description',
-      }
+        width: "40%",
+      },
+      {
+        title: '操作',
+        dataIndex: 'id',
+        key: 'id',
+        render: (text, record) => {
+          return <Button type="link" onClick={() => this.openSettingRoleModal(text)}>设置权限</Button>
+        }
+      },
+
     ];
   };
 
@@ -139,7 +215,7 @@ class RoleInfo extends React.Component {
 
     const commonTableProps = {
       columns: this.tableColumns(),
-      dataSource: this.props.trafficRouteList,
+      dataSource: this.props.roleInfoList,
       loading: this.props.loading.effects['roleInfo/getRoleInfos'],
       total: this.props.total,
       current: this.props.page,
@@ -150,7 +226,21 @@ class RoleInfo extends React.Component {
       onPaginationChange: this.onPaginationChange,
     };
 
+    const roleInfoModalProps = {
+      visible: this.props.modalVisible,
+      dataSource: this.props.currData,
+      onValidatorName: this.onValidatorName,
+      onOk: this.onRoleInfoModalOk,
+      onCancel: this.closeRoleInfoModal,
+    };
+
+    const settingRoleModalProps = {
+      visible: this.props.settingRoleModalVisible,
+    };
+
     return <div>
+      <RoleInfoModal {...roleInfoModalProps} />
+      <SettingRoleModal {...settingRoleModalProps}/>
       <RoleInfoSearch {...roleInfoSearchProps}/>
       <RoleInfoOperationButton {...roleInfoOperationButtonProps}/>
       <CommonTable {...commonTableProps} />

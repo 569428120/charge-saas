@@ -55,7 +55,7 @@ class CommonTable extends Component {
 }
 
 CommonTable.propTypes = {
-  dataSource: PropTypes.object,
+  dataSource: PropTypes.array,
   loading: PropTypes.bool,
   total: PropTypes.number,
   current: PropTypes.number,
